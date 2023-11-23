@@ -16,7 +16,7 @@ def highlight_missing_data(val):
 def sidebar():
     sidebar = st.sidebar
     # logo + data
-    logo = "D:/Códigos/Dash/img/tv_bahia_BRANCA.png"
+    logo = "img/tv_bahia_BRANCA.png"
     Logo_Ba = Image.open(logo)
     st.sidebar.image(Logo_Ba, use_column_width=True)
     st.sidebar.markdown("<h3 style='text-align: center;'>Relatórios</h3>", unsafe_allow_html=True)
