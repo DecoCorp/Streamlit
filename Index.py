@@ -70,7 +70,7 @@ def HistMensal():
             plt.figure(figsize=(10, 6))
             for emissora in dfHistMensal['Emissora'].unique():
                 dados_emissora = dfHistMensal[dfHistMensal['Emissora'] == emissora]
-                plt.plot(dados_emissora['Data'], dados_emissora['Rat'], label=emissora, marker='o')
+                plt.plot(dados_emissora['Data'].to_numpy(), dados_emissora['Rat'].to_numpy(), label=emissora, marker='o')
 
             plt.title("Histórico Mensal - Audiência - 06h às 12h")
             plt.xlabel("Mês")
