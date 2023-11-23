@@ -4,6 +4,7 @@ import os
 import pandas as pd
 import plotly.express as px
 from PIL import Image
+import matplotlib.pyplot as plt
 
 # Configurar o layout da página
 st.set_page_config(layout="wide")
@@ -50,24 +51,11 @@ def GraficoRanking():
         
     # Historico Mensal (Audiência x share)
 def HistMensal():
+    # Configuração do estilo com fundo preto para o Matplotlib
+    plt.style.use('dark_background')
+    
     st.markdown("<h1 style='text-align: center;'>HISTÓRICO MENSAL</h1>", unsafe_allow_html=True)
-    col1, col2, col3, col4, col5 = st.columns(5)  # Criar cinco colunas
-    with col1:
-        st.write("")  # Espaço em branco à esquerda
-        btn1 = st.button("06h às 12h")
-    with col2:
-        st.write("")  # Espaço em branco à direita
-        st.button("07h às 24h")
-    with col3:
-        st.write("")  # Espaço em branco à esquerda
-        st.button("12h às 18h")
-    with col4:
-        st.write("")  # Espaço em branco à direita
-        st.button("18h às 24h")
-    with col5:
-        st.write("")  # Espaço em branco à direita
-        st.button("24h às 30h")
-        
+    
     dadosHistMensal = pd.read_csv('dados/historico_mensal_preparado_0612_2023_5.csv')
     dfHistMensal = pd.DataFrame(dadosHistMensal)
 
@@ -78,9 +66,18 @@ def HistMensal():
         if 'Emissora' in dfHistMensal and 'Rat' in dfHistMensal and 'Data' in dfHistMensal:
             st.write("Histórico Mensal - Audiência - 06h às 12h")
 
-            fig = px.line(dfHistMensal, x='Data', y='Rat', color='Emissora', labels={'Rat': 'Índice'}, markers=True)
+            # Criar um gráfico de linha com fundo preto
+            plt.figure(figsize=(10, 6))
+            for emissora in dfHistMensal['Emissora'].unique():
+                dados_emissora = dfHistMensal[dfHistMensal['Emissora'] == emissora]
+                plt.plot(dados_emissora['Data'], dados_emissora['Rat'], label=emissora, marker='o')
 
-            st.plotly_chart(fig, use_container_width=True)
+            plt.title("Histórico Mensal - Audiência - 06h às 12h")
+            plt.xlabel("Mês")
+            plt.ylabel("Rat")
+            plt.legend()
+            plt.xticks(rotation=45, ha='right')  # Rotacionar rótulos de mês para melhor legibilidade
+            st.pyplot()
         else:
             st.warning("As colunas 'Emissora', 'Rat' ou 'Data' não estão presentes no DataFrame.")
     with col2:
@@ -88,11 +85,21 @@ def HistMensal():
         if 'Emissora' in dfHistMensal and 'Shr' in dfHistMensal and 'Data' in dfHistMensal:
             st.write("Histórico Mensal - Share - 06h às 12h")
 
-            fig = px.line(dfHistMensal, x='Data', y='Shr', color='Emissora', labels={'Shr': 'Índice'})
+            # Criar um gráfico de linha com fundo preto
+            plt.figure(figsize=(10, 6))
+            for emissora in dfHistMensal['Emissora'].unique():
+                dados_emissora = dfHistMensal[dfHistMensal['Emissora'] == emissora]
+                plt.plot(dados_emissora['Data'], dados_emissora['Shr'], label=emissora, marker='o')
 
-            st.plotly_chart(fig, use_container_width=True)
+            plt.title("Histórico Mensal - Share - 06h às 12h")
+            plt.xlabel("Mês")
+            plt.ylabel("Share")
+            plt.legend()
+            plt.xticks(rotation=45, ha='right')  # Rotacionar rótulos de mês para melhor legibilidade
+            st.pyplot()
         else:
             st.warning("As colunas 'Emissora', 'Shr' ou 'Data' não estão presentes no DataFrame.")
+
         
         # 07h às 24h
         
@@ -113,53 +120,92 @@ def HistAnual():
         if 'Emissoras' in dfHistAnual and 'Rat' in dfHistAnual and 'Datas' in dfHistAnual:
             st.markdown("<h5 style='text-align: center;'>Gráfico Histórico Anual - Audiência</h5>", unsafe_allow_html=True)
 
-            fig = px.line(dfHistAnual, x='Datas', y='Rat', color='Emissoras', labels={'Rat': 'Índice'}, markers=True)
+            # Criar uma figura e eixos do Matplotlib
+            fig, ax = plt.subplots(figsize=(8, 6))
 
-            st.plotly_chart(fig, use_container_width=True)
+            # Plotar as linhas
+            for emissora in dfHistAnual['Emissoras'].unique():
+                dados_emissora = dfHistAnual[dfHistAnual['Emissoras'] == emissora]
+                ax.plot(dados_emissora['Datas'], dados_emissora['Rat'], label=emissora, marker='o')
+
+            # Adicionar rótulos e legenda
+            ax.set_xlabel('Datas')
+            ax.set_ylabel('Rat')
+            ax.set_title('Gráfico Histórico Anual - Audiência')
+            ax.legend()
+
+            # Mostrar o gráfico no Streamlit
+            st.pyplot(fig)
         else:
             st.warning("As colunas 'Emissoras', 'Rat' ou 'Datas' não estão presentes no DataFrame.")
+
     with col2:
         st.title("Share")
         if 'Emissoras' in dfHistAnual and 'Shr' in dfHistAnual and 'Datas' in dfHistAnual:
             st.markdown("<h5 style='text-align: center;'>Gráfico Histórico Anual - Share</h5>", unsafe_allow_html=True)
 
-            fig = px.line(dfHistAnual, x='Datas', y='Shr', color='Emissoras', labels={'Shr': 'Índice'}, markers=True)
+            # Criar uma figura e eixos do Matplotlib
+            fig, ax = plt.subplots(figsize=(8, 6))
 
-            st.plotly_chart(fig, use_container_width=True)
+            # Plotar as linhas
+            for emissora in dfHistAnual['Emissoras'].unique():
+                dados_emissora = dfHistAnual[dfHistAnual['Emissoras'] == emissora]
+                ax.plot(dados_emissora['Datas'], dados_emissora['Shr'], label=emissora, marker='o')
+
+            # Adicionar rótulos e legenda
+            ax.set_xlabel('Datas')
+            ax.set_ylabel('Shr')
+            ax.set_title('Gráfico Histórico Anual - Share')
+            ax.legend()
+
+            # Mostrar o gráfico no Streamlit
+            st.pyplot(fig)
         else:
             st.warning("As colunas 'Emissoras', 'Shr' ou 'Datas' não estão presentes no DataFrame.")
 
 
     # Historico min a min dia completo (audiência x share)
 def HistMinXMin():
-    #Segunda
+    # Segunda
     st.markdown("<h1 style='text-align: center;'>MINUTO A MINUTO DIA COMPLETO</h1>", unsafe_allow_html=True)
-    
+
     DadosMinXMin = pd.read_csv('dados/minuto_minuto_preparado_ss_5.csv')
     dfMinxMin = pd.DataFrame(DadosMinXMin)
-    
+
     col1, col2 = st.columns(2)  # Criar duas colunas
     with col1:
         st.title("Audiência")
         if 'Hora' in dfMinxMin and 'Rat' in dfMinxMin and 'Data' in dfMinxMin:
+            plt.figure(figsize=(10, 6))
 
             # Use 'Data' para definir as cores ou marcadores para cada mês
-            fig = px.scatter(dfMinxMin, x='Hora', y='Rat', color='Data', labels={'Rat': 'Índice'}, 
-                            title='Gráfico Minuto a Minuto - Audiência - Segunda a Sexta')
+            for data, group in dfMinxMin.groupby('Data'):
+                plt.scatter(group['Hora'], group['Rat'], label=data)
 
-            st.plotly_chart(fig, use_container_width=True)
+            plt.title('Gráfico Minuto a Minuto - Audiência - Segunda a Sexta')
+            plt.xlabel('Hora')
+            plt.ylabel('Índice')
+            plt.legend()
+            st.pyplot()
+
         else:
             st.warning("As colunas 'Hora', 'Rat' ou 'Data' não estão presentes no DataFrame.")
 
     with col2:
         st.title("Share")
         if 'Hora' in dfMinxMin and 'Shr' in dfMinxMin and 'Data' in dfMinxMin:
+            plt.figure(figsize=(10, 6))
 
             # Use 'Data' para definir as cores ou marcadores para cada mês
-            fig = px.scatter(dfMinxMin, x='Hora', y='Shr', color='Data', labels={'Shr': 'Índice'}, 
-                            title='Gráfico Minuto a Minuto - Audiência - Segunda a Sexta')
+            for data, group in dfMinxMin.groupby('Data'):
+                plt.scatter(group['Hora'], group['Shr'], label=data)
 
-            st.plotly_chart(fig, use_container_width=True)
+            plt.title('Gráfico Minuto a Minuto - Audiência - Segunda a Sexta')
+            plt.xlabel('Hora')
+            plt.ylabel('Índice')
+            plt.legend()
+            st.pyplot()
+
         else:
             st.warning("As colunas 'Hora', 'Shr' ou 'Data' não estão presentes no DataFrame.")
     #Sabado
@@ -172,4 +218,4 @@ if  __name__ == '__main__':
     HistMensal()
     HistAnual()
     HistMinXMin()
-    
+
