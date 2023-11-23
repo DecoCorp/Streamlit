@@ -89,7 +89,8 @@ def HistMensal():
             plt.figure(figsize=(10, 6))
             for emissora in dfHistMensal['Emissora'].unique():
                 dados_emissora = dfHistMensal[dfHistMensal['Emissora'] == emissora]
-                plt.plot(dados_emissora['Data'], dados_emissora['Shr'], label=emissora, marker='o')
+                plt.plot(dados_emissora['Data'].to_numpy(), dados_emissora['Shr'].to_numpy(), label=emissora, marker='o')
+
 
             plt.title("Histórico Mensal - Share - 06h às 12h")
             plt.xlabel("Mês")
@@ -109,6 +110,7 @@ def HistMensal():
         
     # Historico Anual (Audiência x share)
 def HistAnual():
+    
     st.markdown("<h1 style='text-align: center;'>HISTÓRICO ANUAL</h1>", unsafe_allow_html=True)
     
     DadosHistAnual = pd.read_csv('dados/historico_anual_preparado_5.csv')
