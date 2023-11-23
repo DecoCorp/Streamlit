@@ -91,7 +91,6 @@ def HistMensal():
                 dados_emissora = dfHistMensal[dfHistMensal['Emissora'] == emissora]
                 plt.plot(dados_emissora['Data'].to_numpy(), dados_emissora['Shr'].to_numpy(), label=emissora, marker='o')
 
-
             plt.title("Histórico Mensal - Share - 06h às 12h")
             plt.xlabel("Mês")
             plt.ylabel("Share")
@@ -116,6 +115,10 @@ def HistAnual():
     DadosHistAnual = pd.read_csv('dados/historico_anual_preparado_5.csv')
     dfHistAnual = pd.DataFrame(DadosHistAnual)
     
+    fig, ax = plt.subplots(figsize=(10, 6))
+
+    nomes_emissoras_unicos = set()
+    
     col1, col2 = st.columns(2)  # Criar duas colunas
     with col1:
         st.title("Audiência")
@@ -126,14 +129,17 @@ def HistAnual():
             fig, ax = plt.subplots(figsize=(8, 6))
 
             # Plotar as linhas
-            for emissora in dfHistAnual['Emissoras'].unique():
-                dados_emissora = dfHistAnual[dfHistAnual['Emissoras'] == emissora]
-                ax.plot(dados_emissora['Datas'], dados_emissora['Rat'], label=emissora, marker='o')
+            for coluna in dfHistAnual.columns:
+                    if coluna != 'Índice' and coluna != 'Emissora':
+                        # Verificar se o nome da emissora ainda não foi visto
+                        if coluna not in nomes_emissoras_unicos:
+                            ax.plot(dfHistAnual['Data'], dfHistAnual[coluna], label=coluna, marker='o')
+                            nomes_emissoras_unicos.add(coluna)
 
             # Adicionar rótulos e legenda
-            ax.set_xlabel('Datas')
-            ax.set_ylabel('Rat')
-            ax.set_title('Gráfico Histórico Anual - Audiência')
+            ax.set_title("Gráfico de Linha para Múltiplas Colunas")
+            ax.set_xlabel("Data")
+            ax.set_ylabel("Valores")
             ax.legend()
 
             # Mostrar o gráfico no Streamlit
